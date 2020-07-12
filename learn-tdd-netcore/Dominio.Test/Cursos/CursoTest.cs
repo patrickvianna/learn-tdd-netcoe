@@ -1,9 +1,8 @@
-﻿using ExpectedObjects;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Dominio.Test._Util;
+﻿using System;
 using Xunit;
+using ExpectedObjects;
+using Dominio.Test._Builder;
+using Dominio.Test._Util;
 
 namespace Dominio.Test.Cursos
 {
@@ -46,7 +45,7 @@ namespace Dominio.Test.Cursos
         public void NaoDeveCursoTerUmNomeInvalido(string nomeInvalido)
         {
             Assert.Throws<ArgumentException>(() =>
-                new Curso(nomeInvalido, _descricao, _cargaHoraria, _publicoAlvo, _valor)).ComMensagem("Nome inválido");
+                CursoBuilder.Novo().ComNome(nomeInvalido).Build()).ComMensagem("Nome inválido");
         }
 
         [Theory]
@@ -56,17 +55,17 @@ namespace Dominio.Test.Cursos
         public void NaoDeveCursoTerUmaCargaHorariaMenorQueUm(double cargaHorariaInvalida)
         {
             Assert.Throws<ArgumentException>(() =>
-                new Curso(_nome, _descricao, cargaHorariaInvalida, _publicoAlvo, _valor)).ComMensagem("Carga horária inválida");
+                CursoBuilder.Novo().ComCargaHoraria(cargaHorariaInvalida).Build()).ComMensagem("Carga horária inválida");
         }
 
         [Theory]
         [InlineData(0)]
         [InlineData(-2)]
         [InlineData(-100)]
-        public void NaoDeveCursoTerValorMenorQueUm(double valorInvalida)
+        public void NaoDeveCursoTerValorMenorQueUm(double valorInvalido)
         {
             Assert.Throws<ArgumentException>(() =>
-                new Curso(_nome, _descricao, _cargaHoraria, _publicoAlvo, valorInvalida)).ComMensagem("Valor inválido");
+                CursoBuilder.Novo().ComValor(valorInvalido).Build()).ComMensagem("Valor inválido");
         }
     }
 
