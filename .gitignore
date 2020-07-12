@@ -3,3 +3,9 @@
 ################################################################################
 
 /learn-tdd-netcore/Dominio/bin/Debug/netcoreapp3.1
+/learn-tdd-netcore/Dominio/obj
+/learn-tdd-netcore/Dominio.Test/bin/Debug/netcoreapp3.1
+/learn-tdd-netcore/Dominio.Test/obj
+/learn-tdd-netcore/learn-tdd-netcore/obj
+/learn-tdd-netcore/.vs/learn-tdd-netcore
+/learn-tdd-netcore/learn-tdd-netcore/bin/Debug/netcoreapp3.1
