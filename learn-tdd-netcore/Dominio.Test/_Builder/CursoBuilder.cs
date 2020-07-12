@@ -1,4 +1,4 @@
-﻿using Dominio.Test.Cursos;
+﻿using Dominio.Cursos;
 
 namespace Dominio.Test._Builder
 {
