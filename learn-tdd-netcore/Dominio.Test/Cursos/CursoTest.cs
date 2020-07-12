@@ -1,4 +1,5 @@
 ﻿using System;
+using Bogus;
 using Xunit;
 using ExpectedObjects;
 using Dominio.Test._Builder;
@@ -15,11 +16,12 @@ namespace Dominio.Test.Cursos
         private double _valor;
         public CursoTest()
         {
-            _nome = "Informática básica";
-            _descricao = "Descrição do curso";
-            _cargaHoraria = (double)80;
+            var faker = new Faker();
+            _nome = faker.Random.Word();
+            _descricao = faker.Lorem.Paragraph();
+            _cargaHoraria = faker.Random.Double(50, 1000);
             _publicoAlvo = PublicoAlvo.Estudante;
-            _valor = (double)950;
+            _valor = faker.Random.Double(50, 1000);
         }
 
         [Fact]
