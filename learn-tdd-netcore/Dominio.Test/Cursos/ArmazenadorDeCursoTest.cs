@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Bogus;
 using Dominio.Cursos;
 using Moq;
 using Xunit;
@@ -9,22 +10,37 @@ namespace Dominio.Test.Cursos
 {
     public class ArmazenadorDeCursoTest
     {
+        private CursoDto _cursoDto;
+        private Mock<ICursoRepositorio> _cursoRepositorioMock;
+        private ArmazenadorDeCurso _armazenadorDeCurso;
+
+        public ArmazenadorDeCursoTest()
+        {
+            Faker faker = new Faker();
+            _cursoDto = new CursoDto
+            {
+                Name = faker.Random.Word(),
+                Descricao = faker.Lorem.Paragraph(),
+                CargaHoraria = faker.Random.Double(50, 1000),
+                PublicoAlvo = 1,
+                Valor = faker.Random.Double(600, 3000)
+            };
+            _cursoRepositorioMock = new Mock<ICursoRepositorio>();
+            _armazenadorDeCurso = new ArmazenadorDeCurso(_cursoRepositorioMock.Object);
+
+        }
+
         [Fact]
         public void DeveAdicionarCurso()
         {
-            var cursoDto = new CursoDto
-            {
-                Name = "Curso A",
-                Descricao = "Descrição",
-                CargaHoraria = 80,
-                PublicoAlvo = 1,
-                Valor = 850.00
-            };
-            var cursoRepositorioMock = new Mock<ICursoRepositorio>();
-            var armazenadorDeCurso = new ArmazenadorDeCurso(cursoRepositorioMock.Object);
-            armazenadorDeCurso.Armazenar(cursoDto);
+            _armazenadorDeCurso.Armazenar(_cursoDto);
 
-            cursoRepositorioMock.Verify(x => x.Adicionar(It.IsAny<Curso>()));
+            _cursoRepositorioMock.Verify(x => x.Adicionar(
+            It.Is<Curso>(
+                c => c.Nome.Equals(_cursoDto.Name) &&
+                     c.Descricao.Equals(c.Descricao)
+                )
+            ));
         }
     }
 
@@ -51,8 +67,8 @@ namespace Dominio.Test.Cursos
     {
         public string Name { get; set; }
         public string Descricao { get; set; }
-        public int CargaHoraria { get; set; }
-        public int PublicoAlvo { get; set; }
+        public double CargaHoraria { get; set; }
+        public double PublicoAlvo { get; set; }
         public double Valor { get; set; }
     }
 }
