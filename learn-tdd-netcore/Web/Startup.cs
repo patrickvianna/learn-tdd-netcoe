@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Web.Filters;
 
 namespace Web
 {
@@ -25,7 +26,10 @@ namespace Web
         public void ConfigureServices(IServiceCollection services)
         {
             StartupIoc.ConfigureServices(services, Configuration);
-            services.AddControllersWithViews();
+
+            services.AddControllersWithViews(config => {
+                config.Filters.Add(typeof(CustomExceptionFilter));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,7 +44,7 @@ namespace Web
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
             }
             else
             {
