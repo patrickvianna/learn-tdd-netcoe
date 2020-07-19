@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Bogus;
 using Dominio.Cursos;
+using Dominio.Test._Builder;
 using Dominio.Test._Util;
 using Moq;
 using Xunit;
@@ -20,7 +19,7 @@ namespace Dominio.Test.Cursos
             Faker faker = new Faker();
             _cursoDto = new CursoDto
             {
-                Name = faker.Random.Word(),
+                Nome = faker.Random.Word(),
                 Descricao = faker.Lorem.Paragraph(),
                 CargaHoraria = faker.Random.Double(50, 1000),
                 PublicoAlvo = "Estudante",
@@ -38,10 +37,20 @@ namespace Dominio.Test.Cursos
 
             _cursoRepositorioMock.Verify(x => x.Adicionar(
             It.Is<Curso>(
-                c => c.Nome.Equals(_cursoDto.Name) &&
+                c => c.Nome.Equals(_cursoDto.Nome) &&
                      c.Descricao.Equals(c.Descricao)
                 )
             ));
+        }
+
+        [Fact]
+        public void NaoDeveAdicionarCursoComMesmoNomeDeOutroJaSalvo()
+        {
+            var cursoJaSalvo = CursoBuilder.Novo().ComNome(_cursoDto.Nome).Build();
+            _cursoRepositorioMock.Setup(x => x.ObterPeloNome(cursoJaSalvo.Nome)).Returns(cursoJaSalvo);
+
+            Assert.Throws<ArgumentException>(() => _armazenadorDeCurso.Armazenar((_cursoDto)))
+                .ComMensagem("Nome do curso já consta no banco de dados");
         }
 
         [Fact]
@@ -53,37 +62,5 @@ namespace Dominio.Test.Cursos
             Assert.Throws<ArgumentException>(() => _armazenadorDeCurso.Armazenar(_cursoDto))
                 .ComMensagem("Público alvo inválido");
         }
-    }
-
-    public interface ICursoRepositorio
-    {
-        void Adicionar(Curso curso);
-    }
-
-    public class ArmazenadorDeCurso
-    {
-        private ICursoRepositorio _cursoRepositorio;
-        public ArmazenadorDeCurso(ICursoRepositorio cursoRepositorio)
-        {
-            _cursoRepositorio = cursoRepositorio;
-        }
-
-        public void Armazenar(CursoDto cursoDto)
-        {
-            Enum.TryParse(typeof(PublicoAlvo), cursoDto.PublicoAlvo, out var publicoAlvo);
-            if (publicoAlvo == null)
-                throw new ArgumentException("Público alvo inválido");
-
-            var curso = new Curso(cursoDto.Name, cursoDto.Descricao, cursoDto.CargaHoraria, (PublicoAlvo)publicoAlvo, cursoDto.Valor);
-            _cursoRepositorio.Adicionar(curso);
-        }
-    }
-    public class CursoDto
-    {
-        public string Name { get; set; }
-        public string Descricao { get; set; }
-        public double CargaHoraria { get; set; }
-        public string PublicoAlvo { get; set; }
-        public double Valor { get; set; }
     }
 }

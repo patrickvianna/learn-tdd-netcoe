@@ -4,4 +4,11 @@
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::6622AD2C-DB65-4810-AD99-F6A147D10D5C::.NETCoreApp,Version=v3.1::Dominio.Test.Cursos.CursoTest&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=717f7a70_002D82ac_002D4794_002Dbfec_002Dfa520678dff5/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DeveAdicionarCurso" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::6622AD2C-DB65-4810-AD99-F6A147D10D5C::.NETCoreApp,Version=v3.1::Dominio.Test.Cursos.ArmazenadorDeCursoTest.DeveAdicionarCurso&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::6622AD2C-DB65-4810-AD99-F6A147D10D5C::.NETCoreApp,Version=v3.1::Dominio.Test.Cursos.ArmazenadorDeCursoTest.NaoDeveInformarPublicoAlvoInvalido&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::6622AD2C-DB65-4810-AD99-F6A147D10D5C::.NETCoreApp,Version=v3.1::Dominio.Test.Cursos.ArmazenadorDeCursoTest.NaoDeveAdicionarCursoComMesmoNomeDeOutroJaSalvo&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

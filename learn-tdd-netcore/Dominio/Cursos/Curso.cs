@@ -1,8 +1,9 @@
 ﻿using System;
+using Dominio._Base;
 
 namespace Dominio.Cursos
 {
-    public class Curso
+    public class Curso : Entidade
     {
         public string Nome { get; private set; }
         public string Descricao { get; private set; }
@@ -10,6 +11,7 @@ namespace Dominio.Cursos
         public PublicoAlvo PublicoAlvo { get; private set; }
         public double Valor { get; private set; }
 
+        public Curso() { }
         public Curso(string nome, string descricao, double cargaHoraria, PublicoAlvo publicoAlvo, double valor)
         {
             if (string.IsNullOrWhiteSpace(nome)) throw new ArgumentException("Nome inválido");
