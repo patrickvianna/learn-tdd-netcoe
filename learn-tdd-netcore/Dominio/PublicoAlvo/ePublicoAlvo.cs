@@ -1,6 +1,6 @@
-﻿namespace Dominio.Cursos
+﻿namespace Dominio.PublicoAlvo
 {
-    public enum PublicoAlvo
+    public enum ePublicoAlvo
     {
         Estudante,
         Universitario,

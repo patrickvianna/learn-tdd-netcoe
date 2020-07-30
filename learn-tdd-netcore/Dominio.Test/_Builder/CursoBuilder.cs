@@ -1,4 +1,6 @@
 ﻿using Dominio.Cursos;
+using Dominio.PublicoAlvo;
+using System;
 
 namespace Dominio.Test._Builder
 {
@@ -7,8 +9,10 @@ namespace Dominio.Test._Builder
         private string _nome = "Informática básica";
         private string _descricao = "Descrição do curso";
         private double _cargaHoraria = 80;
-        private PublicoAlvo _publicoAlvo = PublicoAlvo.Estudante;
+        private ePublicoAlvo _publicoAlvo = ePublicoAlvo.Estudante;
         private double _valor = 950;
+        private int _id;
+
         public static CursoBuilder Novo()
         {
             return new CursoBuilder();
@@ -38,9 +42,20 @@ namespace Dominio.Test._Builder
             return this;
         }
 
+        public CursoBuilder ComId(int id)
+        {
+            _id = id;
+
+            return this;
+        }
+
         public Curso Build()
         {
-            return new Curso(_nome, _descricao, _cargaHoraria, _publicoAlvo,_valor);
+            var curso = new Curso(_nome, _cargaHoraria, _publicoAlvo,_valor, _descricao);
+            var propertyInfo = curso.GetType().GetProperty("Id");
+            propertyInfo.SetValue(curso, Convert.ChangeType(_id, propertyInfo.PropertyType, null));
+
+            return curso;
         }
     }
 }

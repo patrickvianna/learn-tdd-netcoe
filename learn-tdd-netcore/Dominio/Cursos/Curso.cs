@@ -1,5 +1,6 @@
 ﻿using System;
 using Dominio._Base;
+using Dominio.PublicoAlvo;
 
 namespace Dominio.Cursos
 {
@@ -9,16 +10,16 @@ namespace Dominio.Cursos
         private string _descricao;
         private double _cargaHoraria;
         private string _nome;
-        private PublicoAlvo _publicoAlvo;
+        private ePublicoAlvo _publicoAlvo;
 
-        public PublicoAlvo PublicoAlvo { get => _publicoAlvo; set => _publicoAlvo = value; }
+        public ePublicoAlvo PublicoAlvo { get => _publicoAlvo; set => _publicoAlvo = value; }
         public string Nome { get => _nome; set => _nome = value; }
         public double CargaHoraria { get => _cargaHoraria; set => _cargaHoraria = value; }
         public double Valor { get => _valor; set => _valor = value; }
         public string Descricao { get => _descricao; set => _descricao = value; }
 
         public Curso() { }
-        public Curso(string nome, string descricao, double cargaHoraria, PublicoAlvo publicoAlvo, double valor)
+        public Curso(string nome, double cargaHoraria, ePublicoAlvo publicoAlvo, double valor, string descricao)
         {
             ValidadorDeRegra.Novo()
                 .Quando(string.IsNullOrEmpty(nome), Resource.NomeInvalido)
@@ -31,6 +32,33 @@ namespace Dominio.Cursos
             _cargaHoraria = cargaHoraria;
             _publicoAlvo = publicoAlvo;
             _valor = valor;
+        }
+
+        public void AlterarNome(string nome)
+        {
+            ValidadorDeRegra.Novo()
+                .Quando(string.IsNullOrEmpty(nome), Resource.NomeInvalido)
+                .DispararExcecaoSeExistir();
+
+            Nome = nome;
+        }
+
+        public void AlterarCargaHoraria(double cargaHoraria)
+        {
+            ValidadorDeRegra.Novo()
+                .Quando(cargaHoraria < 1, Resource.CargaHorariaInvalida)
+                .DispararExcecaoSeExistir();
+
+            CargaHoraria = cargaHoraria;
+        }
+
+        public void AlterarValor(double valor)
+        {
+            ValidadorDeRegra.Novo()
+                .Quando(valor < 1, Resource.ValorInvalido)
+                .DispararExcecaoSeExistir();
+
+            Valor = valor;
         }
     }
 }

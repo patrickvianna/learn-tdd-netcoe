@@ -1,32 +1,37 @@
-﻿using System;
+﻿using Moq;
+using Xunit;
 using Bogus;
+using Dominio._Base;
 using Dominio.Cursos;
+using Dominio.PublicoAlvo;
 using Dominio.Test._Builder;
 using Dominio.Test._Util;
-using Moq;
-using Xunit;
 
 namespace Dominio.Test.Cursos
 {
     public class ArmazenadorDeCursoTest
     {
+        private Faker _faker;
         private CursoDto _cursoDto;
         private Mock<ICursoRepositorio> _cursoRepositorioMock;
         private ArmazenadorDeCurso _armazenadorDeCurso;
+        private Mock<IConversorDePublicoAlvo> _conversorDePublicoAlvoMock;
 
         public ArmazenadorDeCursoTest()
         {
-            Faker faker = new Faker();
+            _faker = new Faker();
             _cursoDto = new CursoDto
             {
-                Nome = faker.Random.Word(),
-                Descricao = faker.Lorem.Paragraph(),
-                CargaHoraria = faker.Random.Double(50, 1000),
+                Nome = _faker.Random.Word(),
+                Descricao = _faker.Lorem.Paragraph(),
+                CargaHoraria = _faker.Random.Double(50, 1000),
                 PublicoAlvo = "Estudante",
-                Valor = faker.Random.Double(600, 3000)
+                Valor = _faker.Random.Double(600, 3000)
             };
             _cursoRepositorioMock = new Mock<ICursoRepositorio>();
-            _armazenadorDeCurso = new ArmazenadorDeCurso(_cursoRepositorioMock.Object);
+            _conversorDePublicoAlvoMock = new Mock<IConversorDePublicoAlvo>();
+
+            _armazenadorDeCurso = new ArmazenadorDeCurso(_cursoRepositorioMock.Object, _conversorDePublicoAlvoMock.Object);
 
         }
 
@@ -46,21 +51,11 @@ namespace Dominio.Test.Cursos
         [Fact]
         public void NaoDeveAdicionarCursoComMesmoNomeDeOutroJaSalvo()
         {
-            var cursoJaSalvo = CursoBuilder.Novo().ComNome(_cursoDto.Nome).Build();
-            _cursoRepositorioMock.Setup(x => x.ObterPeloNome(cursoJaSalvo.Nome)).Returns(cursoJaSalvo);
+            var cursoJaSalvo = CursoBuilder.Novo().ComId(_faker.Random.Int(1, 99999999)).ComNome(_cursoDto.Nome).Build();
+            _cursoRepositorioMock.Setup(c => c.ObterPeloNome(_cursoDto.Nome)).Returns(cursoJaSalvo);
 
-            Assert.Throws<ArgumentException>(() => _armazenadorDeCurso.Armazenar((_cursoDto)))
-                .ComMensagem("Nome do curso já consta no banco de dados");
-        }
-
-        [Fact]
-        public void NaoDeveInformarPublicoAlvoInvalido()
-        {
-            var publicoAlvoInvalido = "Medico";
-            _cursoDto.PublicoAlvo = publicoAlvoInvalido;
-
-            Assert.Throws<ArgumentException>(() => _armazenadorDeCurso.Armazenar(_cursoDto))
-                .ComMensagem("Público alvo inválido");
+            Assert.Throws<ExcecaoDeDominio>(() => _armazenadorDeCurso.Armazenar((_cursoDto)))
+                .ComMensagem(Resource.NomeCursoJaExiste);
         }
     }
 }

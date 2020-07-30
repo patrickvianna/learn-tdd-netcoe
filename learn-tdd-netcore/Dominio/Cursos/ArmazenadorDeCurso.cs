@@ -1,27 +1,46 @@
-﻿using System;
+﻿using Dominio._Base;
+using Dominio.PublicoAlvo;
 
 namespace Dominio.Cursos
 {
     public class ArmazenadorDeCurso
     {
-        private ICursoRepositorio _cursoRepositorio;
-        public ArmazenadorDeCurso(ICursoRepositorio cursoRepositorio)
-        {
-            _cursoRepositorio = cursoRepositorio;
-        }
+		private readonly ICursoRepositorio _cursoRepositorio;
+		private readonly IConversorDePublicoAlvo _conversorDePublicoAlvo;
 
-        public void Armazenar(CursoDto cursoDto)
+		public ArmazenadorDeCurso(ICursoRepositorio cursoRepositorio, IConversorDePublicoAlvo conversorDePublicoAlvo)
+		{
+			_cursoRepositorio = cursoRepositorio;
+			_conversorDePublicoAlvo = conversorDePublicoAlvo;
+		}
+
+		public void Armazenar(CursoDto cursoDto)
         {
             var cursoJaSalvo = _cursoRepositorio.ObterPeloNome(cursoDto.Nome);
 
-            if(cursoJaSalvo != null)
-                throw new ArgumentException("Nome do curso já consta no banco de dados");
+			ValidadorDeRegra.Novo()
+				.Quando(cursoJaSalvo != null && cursoJaSalvo.Id != cursoDto.Id, Resource.NomeCursoJaExiste)
+				.DispararExcecaoSeExistir();
 
-            if (!Enum.TryParse(typeof(PublicoAlvo), cursoDto.PublicoAlvo, out var publicoAlvo))
-                throw new ArgumentException("Público alvo inválido");
+			var publicoAlvo = _conversorDePublicoAlvo.Converter(cursoDto.PublicoAlvo);
 
-            var curso = new Curso(cursoDto.Nome, cursoDto.Descricao, cursoDto.CargaHoraria, (PublicoAlvo)publicoAlvo, cursoDto.Valor);
-            _cursoRepositorio.Adicionar(curso);
-        }
+			var curso = new Curso(cursoDto.Nome,
+				cursoDto.CargaHoraria,
+				publicoAlvo,
+				cursoDto.Valor,
+				cursoDto.Descricao);
+
+			if (cursoDto.Id > 0)
+			{
+				curso = _cursoRepositorio.ObterPorId(cursoDto.Id);
+				curso.AlterarNome(cursoDto.Nome);
+				curso.AlterarCargaHoraria(cursoDto.CargaHoraria);
+				curso.AlterarValor(cursoDto.Valor);
+			}
+			else
+			{
+				_cursoRepositorio.Adicionar(curso);
+			}
+		}
     }
 }

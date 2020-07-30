@@ -10,7 +10,7 @@ namespace Dados.Relatorios
 		{
 		}
 
-        Curso ICursoRepositorio.ObterPeloNome(string nome)
+        public Curso ObterPeloNome(string nome)
         {
 			var entidade = Context.Set<Curso>().Where(c => c.Nome.Contains(nome));
 			if (entidade.Any())
